@@ -15,31 +15,31 @@ def train(epo_num=50, show_vgg_params=False):
 
     vis = visdom.Visdom()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')#CUDA可选，无则为CPU
 
     vgg_model = VGGNet(requires_grad=True, show_params=show_vgg_params)
     fcn_model = FCNs(pretrained_net=vgg_model, n_class=2)
     fcn_model = fcn_model.to(device)
     criterion = nn.BCELoss().to(device)
-    optimizer = optim.SGD(fcn_model.parameters(), lr=1e-2, momentum=0.7)
+    optimizer = optim.SGD(fcn_model.parameters(), lr=1e-2, momentum=0.7)#优化器
 
     all_train_iter_loss = []
     all_test_iter_loss = []
 
     # start timing
-    prev_time = datetime.now()
+    prev_time = datetime.now()#设置目前时间
     for epo in range(epo_num):
         
         train_loss = 0
         fcn_model.train()
-        for index, (bag, bag_msk) in enumerate(train_dataloader):
+        for index, (bag, bag_msk) in enumerate(train_dataloader):#训练数据迭代器
             # bag.shape is torch.Size([4, 3, 160, 160])
             # bag_msk.shape is torch.Size([4, 2, 160, 160])
 
             bag = bag.to(device)
             bag_msk = bag_msk.to(device)
 
-            optimizer.zero_grad()
+            optimizer.zero_grad()#优化器残余值清零
             output = fcn_model(bag)
             output = torch.sigmoid(output) # output.shape is torch.Size([4, 2, 160, 160])
             loss = criterion(output, bag_msk)
@@ -113,11 +113,11 @@ def train(epo_num=50, show_vgg_params=False):
                 %(train_loss/len(train_dataloader), test_loss/len(test_dataloader), time_str))
         
 
-        if np.mod(epo, 5) == 0:
+        if np.mod(epo, 5) == 0:#每五轮保存一次训练模型
             torch.save(fcn_model, 'checkpoints/fcn_model_{}.pt'.format(epo))
             print('saveing checkpoints/fcn_model_{}.pt'.format(epo))
 
 
 if __name__ == "__main__":
-
+    print('first step!')
     train(epo_num=100, show_vgg_params=False)
