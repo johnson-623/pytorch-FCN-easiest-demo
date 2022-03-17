@@ -13,12 +13,12 @@ from FCN import FCN8s, FCN16s, FCN32s, FCNs, VGGNet
 
 def train(epo_num=50, show_vgg_params=False):
 
-    vis = visdom.Visdom()
+    vis = visdom.Visdom()#调用Visdom前需先行-python -m visdom.server
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')#CUDA可选，无则为CPU
 
     vgg_model = VGGNet(requires_grad=True, show_params=show_vgg_params)
-    fcn_model = FCNs(pretrained_net=vgg_model, n_class=2)
+    fcn_model = FCNs(pretrained_net=vgg_model, n_class=2)#将VGG网络作为预训练网络
     fcn_model = fcn_model.to(device)
     criterion = nn.BCELoss().to(device)
     optimizer = optim.SGD(fcn_model.parameters(), lr=1e-2, momentum=0.7)#优化器
@@ -31,7 +31,7 @@ def train(epo_num=50, show_vgg_params=False):
     for epo in range(epo_num):
         
         train_loss = 0
-        fcn_model.train()
+        fcn_model.train()#FCN网络训练
         for index, (bag, bag_msk) in enumerate(train_dataloader):#训练数据迭代器
             # bag.shape is torch.Size([4, 3, 160, 160])
             # bag_msk.shape is torch.Size([4, 2, 160, 160])

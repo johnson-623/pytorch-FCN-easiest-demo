@@ -114,7 +114,7 @@ class FCNs(nn.Module):
     def __init__(self, pretrained_net, n_class):
         super().__init__()
         self.n_class = n_class
-        self.pretrained_net = pretrained_net
+        self.pretrained_net = pretrained_net#预训练好的网络
         self.relu    = nn.ReLU(inplace=True)
         self.deconv1 = nn.ConvTranspose2d(512, 512, kernel_size=3, stride=2, padding=1, dilation=1, output_padding=1)
         self.bn1     = nn.BatchNorm2d(512)
