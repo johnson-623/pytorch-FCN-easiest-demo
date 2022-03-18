@@ -10,27 +10,27 @@ from onehot import onehot
 
 transform = transforms.Compose([
     transforms.ToTensor(), 
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])#mean:均值；std：标准差
 
 class BagDataset(Dataset):
 
-    def __init__(self, transform=None):
+    def __init__(self, transform=None):#初始化
         self.transform = transform
         
-    def __len__(self):
+    def __len__(self):#数据集大小
         return len(os.listdir('bag_data'))
 
     def __getitem__(self, idx):
-        img_name = os.listdir('bag_data')[idx]
-        imgA = cv2.imread('bag_data/'+img_name)
-        imgA = cv2.resize(imgA, (160, 160))
-        imgB = cv2.imread('bag_data_msk/'+img_name, 0)
-        imgB = cv2.resize(imgB, (160, 160))
-        imgB = imgB/255
-        imgB = imgB.astype('uint8')
+        img_name = os.listdir('bag_data')[idx]#获取图像文件名
+        imgA = cv2.imread('bag_data/'+img_name)#读取图像
+        imgA = cv2.resize(imgA, (160, 160))#统一图像尺寸至160*160
+        imgB = cv2.imread('bag_data_msk/'+img_name, 0)#读取标签文件名（同图像）
+        imgB = cv2.resize(imgB, (160, 160))#统一尺寸
+        imgB = imgB/255#图像二值化
+        imgB = imgB.astype('uint8')#转变数据类型
         imgB = onehot(imgB, 2)
-        imgB = imgB.transpose(2,0,1)
-        imgB = torch.FloatTensor(imgB)
+        imgB = imgB.transpose(2,0,1)#图像转置
+        imgB = torch.FloatTensor(imgB)#转换至Tensor
         #print(imgB.shape)
         if self.transform:
             imgA = self.transform(imgA)    

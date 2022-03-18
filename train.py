@@ -7,7 +7,8 @@ import torch.nn as nn
 import torch.optim as optim
 import visdom
 
-from BagData import test_dataloader, train_dataloader
+#from BagData import test_dataloader, train_dataloader
+from CardiacData import test_dataloader, train_dataloader
 from FCN import FCN8s, FCN16s, FCN32s, FCNs, VGGNet
 
 
@@ -19,6 +20,7 @@ def train(epo_num=50, show_vgg_params=False):
 
     vgg_model = VGGNet(requires_grad=True, show_params=show_vgg_params)
     fcn_model = FCNs(pretrained_net=vgg_model, n_class=2)#将VGG网络作为预训练网络
+    #fcn_model=torch.load('checkpoints/fcn_model_10.pt')#加载checkpoints模型时，需同时修改模型保存处代码
     fcn_model = fcn_model.to(device)
     criterion = nn.BCELoss().to(device)
     optimizer = optim.SGD(fcn_model.parameters(), lr=1e-2, momentum=0.7)#优化器
@@ -114,8 +116,8 @@ def train(epo_num=50, show_vgg_params=False):
         
 
         if np.mod(epo, 5) == 0:#每五轮保存一次训练模型
-            torch.save(fcn_model, 'checkpoints/fcn_model_{}.pt'.format(epo))
-            print('saveing checkpoints/fcn_model_{}.pt'.format(epo))
+            torch.save(fcn_model, 'checkpoints_cardiac/fcn_model_{}.pt'.format(epo))#保存整个model
+            print('saveing checkpoints_cardiac/fcn_model_{}.pt'.format(epo))
 
 
 if __name__ == "__main__":
