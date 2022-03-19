@@ -52,6 +52,7 @@ def test(epo_num=50, show_vgg_params=False):
                     # vis.close()
                     vis.images(output_np[:, None, :, :], win='test_pred', opts=dict(title='test prediction')) 
                     vis.images(bag_msk_np[:, None, :, :], win='test_label', opts=dict(title='label'))
+                    vis.images(bag,win='test_origin',opts=dict(title='original image'))
                     vis.line(all_test_iter_loss, win='test_iter_loss', opts=dict(title='test iter loss'))
 
 
